@@ -135,10 +135,7 @@ def observation_groups_resources(measurement_group_element, observation_counter,
     return result
 
 
-def diagnostic_report_resources(
-        root,
-        imaging_study_id = DEFAULT_IMAGING_STUDY_ID,
-        patient_id = DEFAULT_PATIENT_ID):
+def diagnostic_report_resources(root):
     result = []
     
     report = dict(resourceType = 'DiagnosticReport')
@@ -150,6 +147,11 @@ def diagnostic_report_resources(
         value = root.find('instance').attrib['uid'],
     )]
 
+    patient = patient_resource(root)
+    result.append(patient)
+
+    imaging_study = imaging_study_resource(root)
+    
     container_element = root.find('document/content/container')
     
     concept_element = container_element.find('concept')
@@ -166,10 +168,10 @@ def diagnostic_report_resources(
     report['status'] = status
     
     report['subject'] = dict(
-        reference = 'Patient/%s' % patient_id,
+        reference = 'Patient/%s' % patient['id'],
     )
     report['imagingStudy'] = [
-        dict(reference = 'ImagingStudy/%s' % imaging_study_id),
+        dict(reference = 'ImagingStudy/%s' % imaging_study['id']),
     ]
 
     performers = []
@@ -200,6 +202,8 @@ def diagnostic_report_resources(
     report['result'] = results
     
     result.extend(observations)
+    result.append(imaging_study)
+
     return result
 
 
