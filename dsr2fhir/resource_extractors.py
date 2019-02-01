@@ -29,13 +29,15 @@ def _terminology(dcm_terminology):
         return 'http://snomed.info/sct'
     return dcm_terminology
 
-def _coded_concept(concept_element):
+def _coded_concept(*concept_elements):
     return dict(
-        coding = [dict(
-            code = concept_element.find('value').text,
-            display = concept_element.find('meaning').text,
-            system = _terminology(concept_element.find('scheme/designator').text),
-        )]
+        coding = [
+            dict(
+                code = concept_element.find('value').text,
+                display = concept_element.find('meaning').text,
+                system = _terminology(concept_element.find('scheme/designator').text),
+            )
+            for concept_element in concept_elements]
     )
 
 def _person_name(element):
@@ -131,6 +133,9 @@ def observation_groups_resources(measurement_group_element, observation_counter,
     result.append(group_observation)
     for num_element in measurement_group_element.findall("num[relationship='CONTAINS']"):
         observation = _create_observation(observation_counter, report_status)
+        observation['code'] = _coded_concept(
+            num_element.find('concept'),
+            *num_element.findall("code[relationship='HAS CONCEPT MOD']"))
         result.append(observation)
     return result
 
