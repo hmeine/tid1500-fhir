@@ -129,6 +129,9 @@ def observation_groups_resources(measurement_group_element, observation_counter,
     result = []
     group_observation = _create_observation(observation_counter, report_status)
     result.append(group_observation)
+    for num_element in measurement_group_element.findall("num[relationship='CONTAINS']"):
+        observation = _create_observation(observation_counter, report_status)
+        result.append(observation)
     return result
 
 
