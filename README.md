@@ -32,3 +32,9 @@ We therefore just need to implement a conversion from the metadata json format t
 
 In the 'examples/' subfolders, there are example TID 1500 SR files and expected .json files written by hand.
 This expected result is a FHIR bundle containing all resources generated and ready to be uploaded to a FHIR server.
+
+## Design Questions
+
+* **Patient IDs** in DICOM may not be unique, but we want to encode them in FHIR. Our idea is to add an `identifier` and to use the patient ID *issuer* as its `system` if present.
+
+* **Multiple Measurements** We had many discussions about how to encode multiple measurements from the same TID1500 measurement group.
