@@ -117,13 +117,18 @@ def imaging_study_resource(root, patient_id = DEFAULT_PATIENT_ID):
     return result
 
 
+def _create_observation(observation_counter, report_status):
+    observation = dict(resourceType = 'Observation')
+    observation['id'] = 'Observation%d' % next(observation_counter)
+    # in DICOM, measurement groups do not have a status themselves:
+    observation['status'] = dict(partial = 'preliminary', final = 'final')[report_status]
+    return observation
+
+
 def observation_groups_resources(measurement_group_element, observation_counter, report_status):
     result = []
-    group_observation = dict(resourceType = 'Observation')
-    group_observation['id'] = 'Observation%d' % next(observation_counter)
+    group_observation = _create_observation(observation_counter, report_status)
     result.append(group_observation)
-    # in DICOM, measurement groups do not have a status themselves:
-    group_observation['status'] = dict(partial = 'preliminary', final = 'final')[report_status]
     return result
 
 
