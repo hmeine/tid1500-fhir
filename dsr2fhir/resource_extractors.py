@@ -58,6 +58,15 @@ def _person_name(element):
     return result
 
 
+def _reference(resource):
+    return dict(
+        reference = '%s/%s' % (
+            resource['resourceType'],
+            resource['id'],
+        )
+    )
+
+
 def patient_resource(root):
     patient_element = root.find('patient')
     assert patient_element is not None
@@ -80,7 +89,7 @@ def patient_resource(root):
     return result
 
 
-def imaging_study_resource(root, patient_id = DEFAULT_PATIENT_ID):
+def imaging_study_resource(root, patient):
     '''Extract imaging study that was the evidence used for the
     measurement report
     '''
@@ -90,9 +99,7 @@ def imaging_study_resource(root, patient_id = DEFAULT_PATIENT_ID):
 
     study_element = root.find('evidence/study')
     result['uid'] = study_element.attrib['uid']
-    result['patient'] = dict(
-        reference = 'Patient/%s' % patient_id,
-    )
+    result['patient'] = _reference(patient)
 
     # this feels a little unclean, since we're looking inside the report, and
     # it may not /always/ have a 1:1 relationship with an imaging study
@@ -155,7 +162,7 @@ def diagnostic_report_resources(root):
     patient = patient_resource(root)
     result.append(patient)
 
-    imaging_study = imaging_study_resource(root)
+    imaging_study = imaging_study_resource(root, patient)
     
     container_element = root.find('document/content/container')
     
@@ -172,12 +179,8 @@ def diagnostic_report_resources(root):
             completion_element.attrib['flag']]
     report['status'] = status
     
-    report['subject'] = dict(
-        reference = 'Patient/%s' % patient['id'],
-    )
-    report['imagingStudy'] = [
-        dict(reference = 'ImagingStudy/%s' % imaging_study['id']),
-    ]
+    report['subject'] = _reference(patient)
+    report['imagingStudy'] = [_reference(imaging_study)]
 
     performers = []
     for pname_element in container_element.findall("pname/concept[value='121008']/.."):
@@ -203,7 +206,7 @@ def diagnostic_report_resources(root):
     
     results = []
     for observation in observations:
-        results.append(dict(reference = 'Observation/%s' % observation['id']))
+        results.append(_reference(observation))
     report['result'] = results
     
     result.extend(observations)
