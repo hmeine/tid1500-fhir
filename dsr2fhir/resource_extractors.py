@@ -138,12 +138,16 @@ def observation_groups_resources(measurement_group_element, observation_counter,
     result = []
     group_observation = _create_observation(observation_counter, report_status)
     result.append(group_observation)
+    group_observation['related'] = []
     for num_element in measurement_group_element.findall("num[relationship='CONTAINS']"):
         observation = _create_observation(observation_counter, report_status)
         observation['code'] = _coded_concept(
             num_element.find('concept'),
             *num_element.findall("code[relationship='HAS CONCEPT MOD']"))
         result.append(observation)
+        group_observation['related'].append(
+            dict(type = 'has-member',
+                 target = _reference(observation)))
     return result
 
 
