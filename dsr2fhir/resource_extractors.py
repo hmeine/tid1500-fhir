@@ -137,6 +137,15 @@ def _create_observation(observation_counter, report_status):
 def observation_groups_resources(measurement_group_element, observation_counter, report_status):
     result = []
     group_observation = _create_observation(observation_counter, report_status)
+    group_observation['identifier'] = [dict(
+        system = 'urn:dicom:uid',
+        value = measurement_group_element.find(
+            "uidref[relationship='HAS OBS CONTEXT']/concept[value='112040']/../value").text,
+    ), dict(
+        system = 'DICOMTrackingID',
+        value = measurement_group_element.find(
+            "text[relationship='HAS OBS CONTEXT']/concept[value='112039']/../value").text,
+    )]
     result.append(group_observation)
     group_observation['related'] = []
     for num_element in measurement_group_element.findall("num[relationship='CONTAINS']"):
