@@ -4,7 +4,7 @@ information from DICOM structured reports (specifically, TID1500
 instances) and generate FHIR resources.
 
 Useful link: dsr2xml's schema definition
-https://github.com/InsightSoftwareConsortium/DCMTK/blob/master/dcmsr/data/dsr2xml.xsd
+https://git.dcmtk.org/?p=dcmtk.git;a=blob;f=dcmsr/data/dsr2xml.xsd;hb=HEAD
 '''
 
 import itertools

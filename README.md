@@ -26,7 +26,7 @@ We did not want to start from scratch, so we considered three possible base impl
 * `dsr2xml` from qcmtk is a commandline tool producing an XML representation.
 * The TID 1500 reader from [dcmqi](https://github.com/QIICR/dcmqi) can produce a meta json file from a TID 1500 report.
 * pydicom does not yet have special support for SR files, but that's WIP by Markus Herrmann at the time of writing.
-For maturity and availability, we chose `dsr2xml`, and wrote a script to convert from its [XML output (link to schema)](https://github.com/InsightSoftwareConsortium/DCMTK/blob/master/dcmsr/data/dsr2xml.xsd).
+For maturity and availability, we chose `dsr2xml`, and wrote a script to convert from its [XML output (link to schema)](https://git.dcmtk.org/?p=dcmtk.git;a=blob;f=dcmsr/data/dsr2xml.xsd;hb=HEAD).
 
 We therefore just need to implement a conversion from the metadata json format to FHIR. E.g., in the following lung case both the histological subtype and either the detected mutation or unknown should be selected. 
 
