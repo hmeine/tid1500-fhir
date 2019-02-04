@@ -136,6 +136,7 @@ def _create_observation(observation_counter, report_status):
 
 def observation_groups_resources(measurement_group_element, observation_counter, report_status):
     result = []
+    
     group_observation = _create_observation(observation_counter, report_status)
     group_observation['identifier'] = [dict(
         system = 'urn:dicom:uid',
@@ -146,17 +147,23 @@ def observation_groups_resources(measurement_group_element, observation_counter,
         value = measurement_group_element.find(
             "text[relationship='HAS OBS CONTEXT']/concept[value='112039']/../value").text,
     )]
-    result.append(group_observation)
+    group_observation['bodySite'] = _coded_concept(
+        measurement_group_element.find("code[relationship='HAS CONCEPT MOD']/concept[value='G-C0E3']/.."))
     group_observation['related'] = []
+    result.append(group_observation)
+
     for num_element in measurement_group_element.findall("num[relationship='CONTAINS']"):
         observation = _create_observation(observation_counter, report_status)
         observation['code'] = _coded_concept(
             num_element.find('concept'),
             *num_element.findall("code[relationship='HAS CONCEPT MOD']"))
+        observation['bodySite'] = group_observation['bodySite']
+
         result.append(observation)
         group_observation['related'].append(
             dict(type = 'has-member',
                  target = _reference(observation)))
+
     return result
 
 
