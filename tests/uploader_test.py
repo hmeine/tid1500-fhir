@@ -71,7 +71,7 @@ def uploader():
 def patched_requests_patient_existing(monkeypatch):
     # store a reference to the old get method
     old_get = requests.get
-    old_post = requests.post
+#    old_post = requests.post
 
     def mocked_get(uri, *args, **kwargs):
         print("Performing GET request at uri %s" % uri)
@@ -91,6 +91,7 @@ def patched_requests_patient_existing(monkeypatch):
         mock.json = lambda: json.loads(mocked_patient_available_return)
         mock.test = lambda: mocked_patient_available_return
         return mock
+
     # finally, patch Requests.get with patched version
     monkeypatch.setattr(requests, 'post', mocked_post)
     monkeypatch.setattr(requests, 'get', mocked_get)

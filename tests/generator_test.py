@@ -1,5 +1,3 @@
-import os
-import sys
 import pytest
 import json
 from dsr2fhir.main import convert_sr_to_fhir_bundle
