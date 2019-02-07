@@ -74,8 +74,11 @@ def patient_resource(root):
     result = dict(resourceType = 'Patient')
     result['id'] = DEFAULT_PATIENT_ID
     result['name'] = [_person_name(patient_element.find('name'))]
+    # requires recent dcmtk version, see
+    # http://git.dcmtk.org/?p=dcmtk.git;a=commit;h=beea9fa1bc6ed7bded01ac1adce50d2dfd7009d3
+    issuer_element = patient_element.find('issuer')
     result['identifier'] = [dict(
-        system = 'urn:dicom:<<<patient_id>>>',
+        system = issuer_element.text if issuer_element else '',
         value = patient_element.find('id').text
     )]
     result['gender'] = DICOM_SEX_TO_FHIR_GENDER[patient_element.find('sex').text]
